@@ -1,0 +1,9 @@
+## Interface: 100002
+## Title: FuryWatch
+## Notes: Maximum Fury warning
+## Author: Milkaselnuss (Nozdormu  - Horde)
+## Maintainer: Sharpedge_Gaming
+## Version: v0.1
+
+
+Main.lua
