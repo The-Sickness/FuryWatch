@@ -2,6 +2,10 @@
 -- Made by Sharpedge_Gaming
 -- v0.1	 - 10.0.2
 
+if select(2, UnitClass("player")) ~= "DEMONHUNTER" then
+    return
+end
+
 
 local _,FuryWatch=...
 local Frame=CreateFrame("ScrollingMessageFrame","FuryWatch",UIParent)	
