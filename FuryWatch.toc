@@ -3,7 +3,14 @@
 ## Notes: Maximum Fury warning
 ## Author: Milkaselnuss (Nozdormu  - Horde)
 ## Maintainer: Sharpedge_Gaming
-## Version: v0.1
+## Version: v0.2
+## SavedVariables: FuryWatchDB
 
+Libs\LibStub\LibStub.lua
+Libs\AceAddon-3.0\AceAddon-3.0.lua
+Libs\AceConfig-3.0\AceConfig-3.0.lua
+Libs\AceConfigDialog-3.0\AceConfigDialog-3.0.lua
+Libs\AceGUI-3.0\AceGUI-3.0.lua
+Libs\LibSharedMedia-3.0\lib.xml
 
 Main.lua
