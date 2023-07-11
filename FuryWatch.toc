@@ -1,10 +1,11 @@
-## Interface: 100100
+## Interface: 100105
 ## Title: FuryWatch
 ## Notes: Maximum Fury warning
 ## Author: Milkaselnuss (Nozdormu  - Horde)
 ## Maintainer: Sharpedge_Gaming
-## Version: v0.2
+## Version: v0.3
 ## SavedVariables: FuryWatchDB
+## IconTexture: 458971
 
 Libs\LibStub\LibStub.lua
 Libs\AceAddon-3.0\AceAddon-3.0.lua
