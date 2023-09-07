@@ -1,9 +1,9 @@
-## Interface: 100105
+## Interface: 100107
 ## Title: FuryWatch
 ## Notes: Maximum Fury warning
 ## Author: Milkaselnuss (Nozdormu  - Horde)
 ## Maintainer: Sharpedge_Gaming
-## Version: v0.3
+## Version: v0.
 ## SavedVariables: FuryWatchDB
 ## IconTexture: 458971
 
