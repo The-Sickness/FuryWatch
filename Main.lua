@@ -1,6 +1,6 @@
 -- FuryWatch 
 -- Made by Sharpedge_Gaming
--- v0.1 - 10.2.5
+-- v0.2 - 10.2.7
 
 if select(2, UnitClass("player")) ~= "DEMONHUNTER" then
     return
@@ -44,7 +44,7 @@ local soundOptionNames = {
     ["Sound11"] = "No Alert",
 }
 
--- Configuration options table
+-- Add a custom message field to the options table
 local options = {
     name = "FuryWatch",
     handler = FuryWatch,
@@ -54,6 +54,7 @@ local options = {
             type = 'select',
             name = 'Font Selection',
             desc = 'Choose the font for the Fury warning message',
+            order = 1,
             values = function()
                 local fontOptionNames = {}
                 for _, fontName in ipairs(LSM:List("font")) do
@@ -68,6 +69,7 @@ local options = {
             type = 'range',
             name = 'Font Size',
             desc = 'Set the font size for the Fury warning message',
+            order = 2,
             min = 10,
             max = 100,
             step = 1,
@@ -78,6 +80,7 @@ local options = {
             type = 'color',
             name = 'Font Color',
             desc = 'Set the font color for the Fury warning message',
+            order = 3,
             get = function(info)
                 return unpack(FuryWatch.db.profile.fontColor)
             end,
@@ -87,10 +90,22 @@ local options = {
             end,
             hasAlpha = true,
         },
+        threshold = {
+            type = 'range',
+            name = 'Fury Threshold',
+            desc = 'Set the Fury threshold percentage for alerts',
+            order = 4,
+            min = 50,
+            max = 100,
+            step = 1,
+            get = function(info) return FuryWatch.db.profile.threshold end,
+            set = function(info, value) FuryWatch.db.profile.threshold = value; Frame.Threshold = value end,
+        },
         message = {
             type = 'select',
-            name = 'Message',
-            desc = 'Select the message to display when Fury is maxed out',
+            name = 'Predefined Message',
+            desc = 'Select the predefined message to display when Fury is maxed out',
+            order = 5,
             values = {
                 ["Maximum Fury"] = "Maximum Fury",
                 ["Fury Full"] = "Fury Full",
@@ -99,21 +114,73 @@ local options = {
                 ["Fury Ready"] = "Fury Ready",
                 ["Fury Overcap"] = "Fury Overcap",
                 ["Fury Saturated"] = "Fury Saturated",
-                ["Fury Ready"] = "Fury Ready"
             },
             get = function(info) return FuryWatch.db.profile.message end,
             set = function(info, value) FuryWatch.db.profile.message = value; FuryWatch:UpdateMessage() end,
+        },
+        customMessageGroup = {
+            type = 'group',
+            name = 'Custom Message Options',
+            inline = true,
+            order = 6,
+            args = {
+                customMessage = {
+                    type = 'input',
+                    name = 'Custom Message',
+                    desc = 'Enter your custom message to display when Fury is maxed out',
+                    order = 1,
+                    get = function(info) return FuryWatch.db.profile.customMessage end,
+                    set = function(info, value) FuryWatch.db.profile.customMessage = value; FuryWatch:UpdateMessage() end,
+                },
+                clearCustomMessage = {
+                    type = 'execute',
+                    name = 'Clear Custom Message',
+                    desc = 'Clear the custom message',
+                    order = 2,
+                    func = function()
+                        FuryWatch.db.profile.customMessage = ""
+                        FuryWatch:UpdateMessage()
+                    end,
+                },
+            },
         },
         soundSelection = {
             type = 'select',
             name = 'Sound Selection',
             desc = 'Choose the sound to play when Fury is maxed out',
+            order = 7,
             values = soundOptionNames,
             get = function(info) return FuryWatch.db.profile.selectedSound end,
             set = function(info, value) FuryWatch.db.profile.selectedSound = value end,
         },
     },
 }
+
+-- Function to update the message
+function FuryWatch:UpdateMessage()
+    -- Ensure message is updated correctly
+end
+
+-- Update Fury warning
+function FuryWatch:Update()
+    if (floor((UnitPower("player", 17) / UnitPowerMax("player", 17)) * 100) >= Frame.Threshold and Frame.Warned == false) then
+        local soundFile = FuryWatch.soundOptions[self.db.profile.selectedSound]
+        if soundFile then
+            PlaySoundFile(soundFile, "Master")
+        end
+        
+        local message = self.db.profile.customMessage ~= "" and self.db.profile.customMessage or self.db.profile.message
+        local color = self.db.profile.fontColor
+        Frame:AddMessage(message, color[1], color[2], color[3], color[4], 3)
+        Frame.Warned = true
+        return
+    end
+    
+    if (floor((UnitPower("player", 17) / UnitPowerMax("player", 17)) * 100) < Frame.Threshold) then
+        Frame.Warned = false
+        return
+    end
+end
 
 -- Initialize
 function FuryWatch:OnInitialize()
@@ -122,10 +189,13 @@ function FuryWatch:OnInitialize()
             font = "Friz Quadrata TT",
             fontSize = 30,
             message = "Maximum Fury",
+            customMessage = "",
             selectedSound = "Sound1",
-            fontColor = {1, 1, 1, 1} -- default to white color
+            fontColor = {1, 1, 1, 1}, -- default to white color
+            threshold = 95, -- default threshold
         },
     })
+    Frame.Threshold = self.db.profile.threshold
     LibStub("AceConfig-3.0"):RegisterOptionsTable("FuryWatch", options, {"furywatch", "fw"})
     self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("FuryWatch", "FuryWatch")
     FuryWatch:InitializeFrame()
@@ -158,33 +228,6 @@ function FuryWatch:UpdateFontColor()
     Frame:SetTextColor(unpack(color))
 end
 
--- Function to update the message
-function FuryWatch:UpdateMessage()
-    -- Logic for updating the message goes here
-end
-
--- Update Fury warning
-function FuryWatch:Update()
-    if (floor((UnitPower("player", 17) / UnitPowerMax("player", 17)) * 100) >= Frame.Threshold and Frame.Warned == false) then
-        local soundFile = FuryWatch.soundOptions[self.db.profile.selectedSound]
-        if soundFile then
-            PlaySoundFile(soundFile, "Master")
-        end
-        
-        local message = self.db.profile.message
-        local color = self.db.profile.fontColor
-        Frame:AddMessage(message, color[1], color[2], color[3], color[4], 3)
-        Frame.Warned = true
-        return
-    end
-    
-    if (floor((UnitPower("player", 17) / UnitPowerMax("player", 17)) * 100) < Frame.Threshold) then
-        Frame.Warned = false
-        return
-    end
-end
-
-
 -- Handle events
 Frame:RegisterEvent("PLAYER_LOGIN")
 Frame:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -195,6 +238,7 @@ Frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 Frame:SetScript("OnEvent", function(self, event, arg1, arg2)
     FuryWatch:Update()
 end)
+
 
 
 
