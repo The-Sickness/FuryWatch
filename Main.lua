@@ -1,6 +1,6 @@
 -- FuryWatch 
 -- Made by Sharpedge_Gaming
--- v0.2 - 10.2.7
+-- v0.4 - 11.0
 
 if select(2, UnitClass("player")) ~= "DEMONHUNTER" then
     return
