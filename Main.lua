@@ -151,7 +151,13 @@ local options = {
             order = 7,
             values = soundOptionNames,
             get = function(info) return FuryWatch.db.profile.selectedSound end,
-            set = function(info, value) FuryWatch.db.profile.selectedSound = value end,
+            set = function(info, value) 
+    FuryWatch.db.profile.selectedSound = value
+    local soundFile = FuryWatch.soundOptions[value]
+    if soundFile then
+        PlaySoundFile(soundFile, "Master")
+    end
+end,
         },
     },
 }
