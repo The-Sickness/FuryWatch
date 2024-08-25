@@ -3,7 +3,7 @@
 ## Notes: Maximum Fury warning
 ## Author: Milkaselnuss (Nozdormu  - Horde)
 ## Maintainer: Sharpedge_Gaming
-## Version: v0.3
+## Version: v0.5
 ## SavedVariables: FuryWatchDB
 ## IconTexture: 458971
 
